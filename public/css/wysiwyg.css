@@ -1,0 +1,113 @@
+/* WYSIWYG Content Styles */
+.wysiwyg-content {
+    color: #333;
+    line-height: 1.6;
+    font-family: inherit;
+}
+
+/* Headings */
+.wysiwyg-content h1,
+.wysiwyg-content h2,
+.wysiwyg-content h3,
+.wysiwyg-content h4,
+.wysiwyg-content h5,
+.wysiwyg-content h6 {
+    font-weight: 600;
+    line-height: 1.2;
+    margin-top: 1.5em;
+    margin-bottom: 0.75em;
+}
+
+.wysiwyg-content h1 { font-size: 2em; }
+.wysiwyg-content h2 { font-size: 1.5em; }
+.wysiwyg-content h3 { font-size: 1.25em; }
+.wysiwyg-content h4 { font-size: 1.125em; }
+.wysiwyg-content h5 { font-size: 1em; }
+.wysiwyg-content h6 { font-size: 0.875em; }
+
+/* Paragraphs */
+.wysiwyg-content p {
+    margin-bottom: 1em;
+}
+
+/* Lists */
+.wysiwyg-content ul,
+.wysiwyg-content ol {
+    margin-bottom: 1em;
+    padding-left: 1.5em;
+}
+
+.wysiwyg-content ul { list-style-type: disc; }
+.wysiwyg-content ol { list-style-type: decimal; }
+
+.wysiwyg-content li {
+    margin-bottom: 0.5em;
+}
+
+/* Links */
+.wysiwyg-content a {
+    color: #2563eb;
+    text-decoration: underline;
+}
+.wysiwyg-content a:hover {
+    color: #1d4ed8;
+}
+
+/* Images */
+.wysiwyg-content img {
+    max-width: 100%;
+    height: auto;
+    margin: 1em 0;
+    border-radius: 0.375rem;
+}
+
+/* Blockquotes */
+.wysiwyg-content blockquote {
+    border-left: 4px solid #e5e7eb;
+    padding-left: 1em;
+    margin: 1em 0;
+    font-style: italic;
+    color: #4b5563;
+}
+
+/* Tables */
+.wysiwyg-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1em;
+}
+
+.wysiwyg-content th,
+.wysiwyg-content td {
+    border: 1px solid #e5e7eb;
+    padding: 0.5em;
+}
+
+.wysiwyg-content th {
+    background-color: #f9fafb;
+    font-weight: 600;
+}
+
+/* Code blocks */
+.wysiwyg-content code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Courier New", monospace;
+    font-size: 0.875em;
+    background-color: #f3f4f6;
+    padding: 0.2em 0.4em;
+    border-radius: 0.25em;
+}
+
+/* Horizontal Rule */
+.wysiwyg-content hr {
+    border: none;
+    border-top: 1px solid #e5e7eb;
+    margin: 2em 0;
+}
+
+/* Remove extra spacing on first and last children */
+.wysiwyg-content > *:first-child {
+    margin-top: 0;
+}
+.wysiwyg-content > *:last-child {
+    margin-bottom: 0;
+}

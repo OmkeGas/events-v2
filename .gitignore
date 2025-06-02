@@ -1,0 +1,64 @@
+# IDE and Editor files
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+.DS_Store
+Thumbs.db
+
+# Composer
+/vendor/
+composer.phar
+composer.lock
+
+# Node.js
+/node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Uploaded files and user content
+/public/images/events/*
+!/public/images/events/.gitkeep
+
+# Logs
+/logs/
+*.log
+
+# Cache files
+/cache/
+*.cache
+
+# Build files
+/dist/
+/build/
+
+# Database files
+*.sqlite
+*.sqlite3
+*.db
+
+# Backup files
+*.bak
+*.backup
+*~
+
+# Config files that might contain sensitive information
+config.php
+
+# Third-party libraries that should be installed via Composer
+/public/assets/vendor/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db

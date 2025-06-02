@@ -1,0 +1,22 @@
+{
+  "name": "event",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "npx @tailwindcss/cli -i ./resources/css/app.css -o ./public/css/style.css --watch",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@tailwindcss/cli": "^4.1.8",
+    "flowbite": "^3.1.2",
+    "flowbite-typography": "^1.0.5",
+    "tailwindcss": "^4.1.8"
+  },
+  "overrides": {
+    "prosemirror-model": "1.19.3"
+  }
+}

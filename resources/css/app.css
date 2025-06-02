@@ -1,0 +1,42 @@
+/* Tailwind */
+@import url("https://fonts.cdnfonts.com/css/lemonmilk");
+@import url("https://fonts.cdnfonts.com/css/product-sans");
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@import "tailwindcss";
+
+@theme {
+    --font-lemon-milk: "Lemon/Milk", sans-serif;
+    --font-product-sans: "Product Sans", sans-serif;
+}
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+/* Flowbite */
+@plugin "flowbite/plugin";
+/*@plugin "flowbite-typography";*/
+@source "../../node_modules/flowbite";
+@source "../node_modules/flowbite-datepicker";
+
+
+.stat-card {
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px -5px rgba(59, 130, 246, 0.15);
+}
+
+.icon-container {
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover .icon-container {
+    transform: scale(1.05);
+}
+
+.blue-gradient {
+    background: linear-gradient(135deg, #e0f2fe 0%, #bfdbfe 100%);
+}
