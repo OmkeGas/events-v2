@@ -115,13 +115,9 @@ $registrationClosed = strtotime($data['event']['registration_deadline']) < time(
                                     <td class="px-6 py-4"><?= $participant['email'] ?></td>
                                     <td class="px-6 py-4"><?= date('d M Y, H:i', strtotime($participant['registration_date'])) ?></td>
                                     <td class="px-6 py-4">
-                                        <?php if($participant['status'] === 'validated'): ?>
+                                        <?php if($participant['status'] === 'registered'): ?>
                                             <span class="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                                                Validated
-                                            </span>
-                                        <?php elseif($participant['status'] === 'pending'): ?>
-                                            <span class="bg-yellow-100 text-yellow-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
-                                                Pending
+                                                Registered
                                             </span>
                                         <?php else: ?>
                                             <span class="bg-red-100 text-red-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
