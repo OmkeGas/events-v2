@@ -174,7 +174,7 @@
                                         <?php if (!empty($event['thumbnail'])): ?>
                                             <img src="<?= BASE_URL ?>/images/events/<?= $event['thumbnail'] ?>"
                                                  alt="<?= htmlspecialchars($event['title']) ?>"
-                                                 class="w-full object-cover transition-transform duration-500 group-hover:scale-105">
+                                                 class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105">
                                         <?php else: ?>
                                             <div class="w-full h-full flex items-center justify-center bg-blue-50">
                                                 <svg class="w-12 h-12 text-blue-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -217,16 +217,22 @@
 
                                             <!-- Event timing badge -->
                                             <?php
-                                            $today = date('Y-m-d');
-                                            $daysUntil = round((strtotime($event['start_date']) - strtotime($today)) / (60 * 60 * 24));
+                                            $now = new DateTime();
+                                            $eventDateTime = new DateTime($event['start_date'] . ' ' . $event['start_time']);
+                                            $interval = $now->diff($eventDateTime);
+                                            $daysUntil = (int)$interval->format('%r%a');
                                             ?>
-                                            <?php if ($daysUntil <= 7 && $daysUntil > 0): ?>
-                                                <span class="text-xs font-medium px-2 py-0.5 bg-red-100 text-red-700 rounded-full ml-2 whitespace-nowrap">
-                                                    Soon
+                                            <?php if ($daysUntil === 0 && $now->format('Y-m-d') === $event['start_date']): ?>
+                                                <span class="text-xs font-medium px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full ml-2 whitespace-nowrap">
+                                                    Today
                                                 </span>
-                                            <?php elseif ($daysUntil <= 14 && $daysUntil > 0): ?>
+                                            <?php elseif ($daysUntil === 1): ?>
                                                 <span class="text-xs font-medium px-2 py-0.5 bg-orange-100 text-orange-700 rounded-full ml-2 whitespace-nowrap">
-                                                    Coming up
+                                                    Tomorrow
+                                                </span>
+                                            <?php elseif ($daysUntil < 0): ?>
+                                                <span class="text-xs font-medium px-2 py-0.5 bg-gray-100 text-gray-500 rounded-full ml-2 whitespace-nowrap">
+                                                    Passed
                                                 </span>
                                             <?php else: ?>
                                                 <span class="text-xs font-medium px-2 py-0.5 bg-green-100 text-green-700 rounded-full ml-2 whitespace-nowrap">

@@ -81,7 +81,7 @@
                                 <?php
                                 // Calculate remaining days
                                 $today = new DateTime();
-                                $eventDate = new DateTime($event['start_date']);
+                                $eventDate = new DateTime($event['start_date'] . ' ' . $event['start_time']);
                                 $daysRemaining = $today->diff($eventDate)->days;
                                 $isPast = $today > $eventDate;
                                 ?>

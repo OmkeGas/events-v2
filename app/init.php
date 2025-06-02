@@ -1,11 +1,9 @@
 <?php
+date_default_timezone_set('Asia/Jakarta');
 
-// Autoloader
 spl_autoload_register(function ($class) {
-    // Debug
     error_log("Trying to autoload: " . $class);
     
-    // Special handling for Core namespace - it's in the app directory
     if (strpos($class, 'Core\\') === 0) {
         $file = __DIR__ . '/' . str_replace('\\', '/', $class) . '.php';
         error_log("Looking for Core class at: " . $file);
@@ -15,7 +13,6 @@ spl_autoload_register(function ($class) {
         }
     }
     
-    // Special handling for App namespace - map to lowercase 'app/controllers' and 'app/models' directories
     if (strpos($class, 'App\\Controllers\\') === 0) {
         $file = __DIR__ . '/Controllers/' . substr(str_replace('App\\Controllers\\', '', $class), 0) . '.php';
         if (file_exists($file)) {
@@ -31,13 +28,11 @@ spl_autoload_register(function ($class) {
         }
     }
 
-    // Normal autoloading for other namespaces
     $path = __DIR__ . '/../';
     $class = str_replace('\\', '/', $class);
     $file = $path . $class . '.php';
     
     error_log("Looking for class at: " . $file);
-    // Check if file exists
     if (file_exists($file)) {
         require_once $file;
         return true;
