@@ -14,7 +14,7 @@
 
 /* Flowbite */
 @plugin "flowbite/plugin";
-/*@plugin "flowbite-typography";*/
+@import "flowbite/src/themes/default";
 @source "../../node_modules/flowbite";
 @source "../node_modules/flowbite-datepicker";
 

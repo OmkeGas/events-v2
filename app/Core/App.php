@@ -11,6 +11,23 @@ class App
     {
         $url = $this->parseURL();
 
+        // Custom routes for ticket features
+        if (isset($url[0]) && $url[0] == 'ticket' && isset($url[1])) {
+            if ($url[1] == 'download' && isset($url[2])) {
+                $this->controller = 'App\\Controllers\\TicketController';
+                $this->method = 'download';
+                $this->params = [$url[2]];
+                call_user_func_array([$this->controller = new $this->controller, $this->method], $this->params);
+                return;
+            } elseif ($url[1] == 'certificate' && isset($url[2])) {
+                $this->controller = 'App\\Controllers\\TicketController';
+                $this->method = 'certificate';
+                $this->params = [$url[2]];
+                call_user_func_array([$this->controller = new $this->controller, $this->method], $this->params);
+                return;
+            }
+        }
+
         // Controller
         if (isset($url[0])) {
             $controllerName = ucfirst($url[0]) . 'Controller';
@@ -49,3 +66,4 @@ class App
         return [];
     }
 }
+

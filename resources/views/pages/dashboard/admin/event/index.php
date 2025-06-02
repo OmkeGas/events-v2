@@ -150,16 +150,15 @@
                             </li>
                         </ul>
                         <div class="py-1">
-                            <form action="<?=BASE_URL?>/event/destroy/<?=$event['id']?>" method="post">
+                            <form action="<?= BASE_URL ?>/event/destroy/<?= $event['id'] ?>" method="post" onsubmit="return confirm('Are you sure you want to delete this event?');">
                                 <button type="submit"
                                         class="flex items-center justify-center w-full cursor-pointer px-4 py-2 text-sm font-semibold text-red-500 hover:bg-gray-100 dark:hover:bg-gray-900">
                                     Delete
                                 </button>
                             </form>
                         </div>
-                    </div>
-                </tr>
-            <?php endforeach; ?>
+                    </tr>
+                <?php endforeach; ?>
             </tbody>
         </table>
     </section>
