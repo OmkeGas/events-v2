@@ -37,7 +37,6 @@ public/images/events/
 public/storage/
 storage/
 bootstrap/cache/
-app/Config/app.php
 
 # Build files
 /dist/
