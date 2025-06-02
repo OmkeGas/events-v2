@@ -23,7 +23,21 @@ package-lock.json
 
 # Cache files
 /cache/
-*.cache
+
+# PHP Composer
+/vendor/
+composer.lock
+
+# PHPUnit
+.phpunit.result.cache
+
+# Application specific
+app/Models/events.sql
+public/images/events/
+public/storage/
+storage/
+bootstrap/cache/
+app/Config/app.php
 
 # Build files
 /dist/

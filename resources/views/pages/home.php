@@ -18,6 +18,6 @@
     </div>
 
     <div class="mt-12 flex justify-center lg:mt-0 lg:w-1/2">
-        <img src="<?= BASE_URL ?>/images/profile-member.png ?>" alt="Profile Member" class="mx-auto h-auto w-full max-w-xl lg:w-[700px] lg:max-w-none" />
+        <img src="<?= BASE_URL ?>/images/profile-member.png?>" alt="Profile Member" class="mx-auto h-auto w-full max-w-xl lg:w-[700px] lg:max-w-none" />
     </div>
 </section>

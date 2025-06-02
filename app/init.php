@@ -15,6 +15,22 @@ spl_autoload_register(function ($class) {
         }
     }
     
+    // Special handling for App namespace - map to lowercase 'app/controllers' and 'app/models' directories
+    if (strpos($class, 'App\\Controllers\\') === 0) {
+        $file = __DIR__ . '/Controllers/' . substr(str_replace('App\\Controllers\\', '', $class), 0) . '.php';
+        if (file_exists($file)) {
+            require_once $file;
+            return true;
+        }
+    }
+    if (strpos($class, 'App\\Models\\') === 0) {
+        $file = __DIR__ . '/Models/' . substr(str_replace('App\\Models\\', '', $class), 0) . '.php';
+        if (file_exists($file)) {
+            require_once $file;
+            return true;
+        }
+    }
+
     // Normal autoloading for other namespaces
     $path = __DIR__ . '/../';
     $class = str_replace('\\', '/', $class);
