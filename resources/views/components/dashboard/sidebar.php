@@ -26,7 +26,7 @@
             </li>
             <?php if($_SESSION['user']['role'] === "admin"): ?>
             <li>
-                <a href="<?= BASE_URL ?>/dashboard/users"
+                <a href="<?= BASE_URL ?>/users"
                    class="flex items-center p-3 rounded-xl group transition-colors <?= $this->isActive('/dashboard/users')  ? 'bg-blue-50 text-blue-900' : 'text-blue-700 hover:bg-blue-50' ?>">
                     <svg
                             class="shrink-0 w-5 h-5 transition duration-75 <?= $this->isActive('/dashboard/users') ? 'text-blue-600' : 'text-blue-500 group-hover:text-blue-600' ?>"
@@ -36,18 +36,6 @@
                               d="M16 19h4a1 1 0 0 0 1-1v-1a3 3 0 0 0-3-3h-2m-2.236-4a3 3 0 1 0 0-4M3 18v-1a3 3 0 0 1 3-3h4a3 3 0 0 1 3 3v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1Zm8-10a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                     </svg>
                     <span class="flex-1 ms-3 whitespace-nowrap">Users</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?= BASE_URL ?>/dashboard/register"
-                   class="flex items-center p-3 rounded-xl group transition-colors <?= $this->isActive('/dashboard/register') ? 'bg-blue-50 text-blue-900' : 'text-blue-700 hover:bg-blue-50' ?>">
-                    <svg
-                            class="shrink-0 w-5 h-5 transition duration-75 <?= $this->isActive('/dashboard/register') ? 'text-blue-600' : 'text-blue-500 group-hover:text-blue-600' ?>"
-                            fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    <span class="flex-1 ms-3 whitespace-nowrap">Registrations</span>
                 </a>
             </li>
             <?php endif; ?>
