@@ -4,14 +4,6 @@ use Core\Validator;
 
 <div class="space-y-4 p-6 sm:p-8 md:space-y-6">
     <h1 class="text-xl leading-tight font-bold tracking-tight text-gray-900 md:text-2xl dark:text-white">Create an account</h1>
-
-    <?php if (isset($_SESSION['error'])): ?>
-        <div class="mb-4 rounded-lg bg-red-50 p-4 text-sm text-red-800">
-            <?= $_SESSION['error']; ?>
-            <?php unset($_SESSION['error']); ?>
-        </div>
-    <?php endif; ?>
-
     <form class="space-y-4 md:space-y-6" action="<?= BASE_URL ?>/register/store" method="post" enctype="multipart/form-data">
         <div class="mb-6">
             <label for="full_name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Full Name</label>

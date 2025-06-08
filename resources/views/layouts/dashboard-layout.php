@@ -23,9 +23,7 @@
         <?php require_once '../resources/views/pages/' . $view . '.php'; ?>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/flowbite@3.1.2/dist/flowbite.min.js"></script>
-    <script>
-        document.querySelectorAll('.tox-promotion-button').forEach(el => el.remove());
-    </script>
+    <script src="<?= BASE_URL ?>/js/script.js"></script>
+    <script src="<?= BASE_URL ?>/js/flowbite.min.js"></script>
 </body>
 </html>

@@ -7,8 +7,16 @@ use Core\Flasher;
 use Core\Middleware;
 use Core\Validator;
 
+/**
+ * DashboardController handles the dashboard functionalities for both admin and regular users
+ * It provides methods to view the dashboard, user profile, update profile.
+ */
 class ProfileController extends Controller
 {
+    /**
+     * Validation rules for user profile fields
+     * These rules are used to validate user input when updating their profile
+     */
     private const VALIDATION_RULES = [
         'username' => [
             'required',
@@ -27,29 +35,27 @@ class ProfileController extends Controller
         ]
     ];
 
+    /**
+     * ProfileController constructor.
+     * Ensures user is authenticated before accessing profile methods
+     */
     public function __construct()
     {
         Middleware::isAuth();
     }
 
+    /**
+     * Display the user profile
+     */
     public function index()
     {
-        $userModel = $this->model('User');
-        $user = $userModel->getUserById($_SESSION['user']['id']);
-
-        $data = [
-            'title' => 'My Profile',
-            'userProfile' => $user,
-            'user' => [
-                'username' => $_SESSION['user']['username'],
-                'email' => $_SESSION['user']['email'],
-                'full_name' => $_SESSION['user']['full_name']
-            ]
-        ];
-
-        $this->dashboardView('dashboard/profile/index', $data);
+        $this->redirect('/dashboard/profile');
     }
 
+    /**
+     * Update user profile
+     * Validates input, checks for unique constraints, and updates the user profile
+     */
     public function update()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -79,10 +85,39 @@ class ProfileController extends Controller
             $validationRules[$field][] = $rule;
         }
 
+        // Only validate password if it's provided
+        if (!empty($_POST['password'])) {
+            $validationRules['password'] = [
+                ['min', 8],
+                ['max', 255]
+            ];
+            $validationRules['password_confirmation'] = [
+                'required',
+                ['matches', ['field_to_match' => 'password']]
+            ];
+        }
+
         if (!$validator->validate($_POST, $validationRules)) {
             $_SESSION['validation_errors'] = $validator->getErrors();
             $_SESSION['old_input'] = $_POST;
             Flasher::setFlash('Validation Error', 'Please check your input', 'error');
+            $this->redirect('/dashboard/profile');
+            return;
+        }
+
+        // Check if any data has actually changed
+        $hasChanges = false;
+        if ($currentUser['username'] !== $_POST['username'] ||
+            $currentUser['email'] !== $_POST['email'] ||
+            $currentUser['full_name'] !== $_POST['full_name'] ||
+            !empty($_POST['password']) ||
+            (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === 0)) {
+            $hasChanges = true;
+        }
+
+        // If no changes, inform the user and redirect
+        if (!$hasChanges) {
+            Flasher::setFlash('Info', 'No changes detected to update', 'info');
             $this->redirect('/dashboard/profile');
             return;
         }
@@ -96,41 +131,18 @@ class ProfileController extends Controller
 
         // Only update password if provided
         if (!empty($_POST['password'])) {
-            // Validate password fields
-            if ($_POST['password'] !== $_POST['password_confirmation']) {
-                $_SESSION['validation_errors'] = ['password_confirmation' => ['Passwords do not match']];
-                $_SESSION['old_input'] = $_POST;
-                Flasher::setFlash('Validation Error', 'Passwords do not match', 'error');
-                $this->redirect('/dashboard/profile');
-                return;
-            }
             $data['password'] = $_POST['password'];
         }
 
-        // Handle profile picture upload
-        if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === 0) {
-            $uploadDir = 'public/images/profiles/';
-            $fileName = uniqid('profile_') . '.' . pathinfo($_FILES['profile_picture']['name'], PATHINFO_EXTENSION);
-            $uploadPath = $uploadDir . $fileName;
-
-            if (!is_dir($uploadDir)) {
-                mkdir($uploadDir, 0777, true);
-            }
-
-            if (move_uploaded_file($_FILES['profile_picture']['tmp_name'], $uploadPath)) {
-                $data['profile_picture'] = $fileName;
-            }
-        }
-
         if ($userModel->updateUser($data)) {
-            // Update session data
+            unset($_SESSION['old_input']);
+            unset($_SESSION['validation_errors']);
+            // Update session data with new user info
             $_SESSION['user'] = $userModel->getUserById($id);
-
             Flasher::setFlash('Success', 'Profile updated successfully', 'success');
         } else {
             Flasher::setFlash('Error', 'Failed to update profile', 'error');
         }
-
         $this->redirect('/dashboard/profile');
     }
 }

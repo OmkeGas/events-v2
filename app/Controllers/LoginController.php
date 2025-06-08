@@ -7,22 +7,40 @@ use Core\Validator;
 use Core\Flasher;
 use Core\Middleware;
 
+/**
+ * LoginController handles user login functionality.
+ * It validates login credentials and manages user sessions.
+ */
 class LoginController extends Controller
 {
+    /**
+     * Validation rules for login form.
+     */
     private const VALIDATION_RULES = [
         'username' => ['required'],
         'password' => ['required']
     ];
 
+    /**
+     * LoginController constructor.
+     * Ensures that only guests can access the login page.
+     */
     public function __construct() {
         Middleware::isGuest();
     }
 
+    /**
+     * Display the login page.
+     */
     public function index()
     {
         $this->authView('/auth/login');
     }
 
+    /**
+     * Handle the login form submission.
+     * Validates input, checks user credentials, and starts a session if successful.
+     */
     public function store()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -41,7 +59,6 @@ class LoginController extends Controller
             return;
         }
 
-        // Menggunakan method model dari parent Controller
         $userModel = $this->model('User');
         $user = $userModel->getUserByUsername($_POST['username']);
 
@@ -51,7 +68,6 @@ class LoginController extends Controller
             return;
         }
 
-        // Set session untuk user yang berhasil login - dengan struktur array
         $_SESSION['user'] = [
             'id' => $user['id'],
             'username' => $user['username'],

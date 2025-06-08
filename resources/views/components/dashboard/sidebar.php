@@ -26,10 +26,10 @@
             </li>
             <?php if($_SESSION['user']['role'] === "admin"): ?>
             <li>
-                <a href="<?= BASE_URL ?>/users"
-                   class="flex items-center p-3 rounded-xl group transition-colors <?= $this->isActive('/dashboard/users')  ? 'bg-blue-50 text-blue-900' : 'text-blue-700 hover:bg-blue-50' ?>">
+                <a href="<?= BASE_URL ?>/dashboard/users"
+                   class="flex items-center p-3 rounded-xl group transition-colors <?= $this->isActive('dashboard/users') || $this->isActiveSub('users')  ? 'bg-blue-50 text-blue-900' : 'text-blue-700 hover:bg-blue-50' ?>">
                     <svg
-                            class="shrink-0 w-5 h-5 transition duration-75 <?= $this->isActive('/dashboard/users') ? 'text-blue-600' : 'text-blue-500 group-hover:text-blue-600' ?>"
+                            class="shrink-0 w-5 h-5 transition duration-75 <?= $this->isActive('dashboard/users') || $this->isActiveSub('users') ? 'text-blue-600' : 'text-blue-500 group-hover:text-blue-600' ?>"
                             fill="none" stroke="currentColor" xmlns="http://www.w3.org/2000/svg" width="24" height="24"
                             viewBox="0 0 24 24">
                         <path stroke="currentColor" stroke-linecap="round" stroke-width="2"

@@ -13,8 +13,8 @@
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
 /* Flowbite */
-@plugin "flowbite/plugin";
 @import "flowbite/src/themes/default";
+@plugin "flowbite/plugin";
 @source "../../node_modules/flowbite";
 @source "../node_modules/flowbite-datepicker";
 

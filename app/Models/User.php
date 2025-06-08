@@ -13,17 +13,22 @@ class User
         $this->db = new Database;
     }
 
-    public  function register($data)
+    /**
+     * Store a new user in the database
+     * This method is used by the admin to create new users
+     */
+    public function create($data)
     {
         try {
             $password = password_hash($data['password'], PASSWORD_DEFAULT);
-            $this->db->query("INSERT INTO $this->table (username, email, full_name, password, profile_picture )
-                                    VALUES (:username, :email, :full_name, :password, :profile_picture)");
+            $this->db->query("INSERT INTO $this->table (username, email, full_name, password, profile_picture, role )
+                                    VALUES (:username, :email, :full_name, :password, :profile_picture, :role)");
             $this->db->bind(':username', $data['username']);
             $this->db->bind(':email', $data['email']);
             $this->db->bind(':full_name', $data['full_name']);
             $this->db->bind(':password', $password);
             $this->db->bind(':profile_picture', $data['profile_picture']);
+            $this->db->bind(':role', !empty($data['role']) ? $data['role'] : 'user');
 
 
             $this->db->execute();
@@ -87,9 +92,9 @@ class User
     public function updateUser($data)
     {
         try {
-            $this->db->query("UPDATE $this->table SET 
-                username = :username, 
-                email = :email, 
+            $this->db->query("UPDATE $this->table SET
+                username = :username,
+                email = :email,
                 full_name = :full_name
                 " . (isset($data['password']) && !empty($data['password']) ? ", password = :password" : "") . "
                 " . (isset($data['profile_picture']) && !empty($data['profile_picture']) ? ", profile_picture = :profile_picture" : "") . "
@@ -135,3 +140,4 @@ class User
         }
     }
 }
+

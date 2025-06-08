@@ -365,7 +365,7 @@
                                            class="flex-1 text-center text-gray-900 bg-white border border-gray-300 hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg text-sm px-5 py-2.5">
                                             View Event
                                         </a>
-                                        <form action="<?= BASE_URL ?>/registration/destroy/<?= $registration['id'] ?>"
+                                        <form action="<?= BASE_URL ?>/registration/cancel/<?= $registration['id'] ?>"
                                               method="post" class="flex-1"
                                               onsubmit="return confirm('Are you sure you want to cancel this registration?');">
                                             <button type="submit"
@@ -529,7 +529,7 @@
 
                                     <!-- Action Button -->
                                     <div class="pt-2">
-                                        <a href="<?= BASE_URL ?>/event/<?= $registration['id_event'] ?>"
+                                        <a href="<?= BASE_URL ?>/event/show/<?= $registration['id_event'] ?>"
                                            class="w-full inline-flex items-center justify-center px-6 py-3 border border-gray-300 shadow-sm text-sm font-medium rounded-lg text-gray-700 bg-white hover:bg-gray-50 hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
                                             <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -699,7 +699,7 @@
                                 <!-- Action Buttons -->
                                 <div class="border-t border-gray-100 p-4 bg-gray-50">
                                     <a
-                                            href="<?= BASE_URL ?>/event/<?= $registration['id_event'] ?>"
+                                            href="<?= BASE_URL ?>/event/show/<?= $registration['id_event'] ?>"
                                             class="block w-full text-center text-gray-700 bg-white border border-gray-300 hover:bg-gray-100 hover:border-gray-400 focus:ring-4 focus:outline-none focus:ring-gray-200 rounded-lg text-sm px-5 py-2.5 font-medium transition-colors duration-200"
                                     >
                                         View Event Details

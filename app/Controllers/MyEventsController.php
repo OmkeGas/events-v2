@@ -4,19 +4,27 @@ namespace App\Controllers;
 
 use Core\Controller;
 use Core\Flasher;
+use Core\Middleware;
 
+/**
+ * MyEventsController handles user-specific event registrations.
+ * It allows users to view their registered events and cancel registrations.
+ */
 class MyEventsController extends Controller
 {
+    /**
+     * MyEventsController constructor.
+     * Ensures that only authenticated users can access this controller.
+     */
     public function __construct()
     {
-        // Check if user is logged in
-        if (!isset($_SESSION['user'])) {
-            Flasher::setFlash('Login required', 'You need to login first to access this page', 'warning');
-            $this->redirect('/login');
-            exit;
-        }
+       Middleware::isUser();
     }
 
+    /**
+     * Display the user's registered events.
+     * Fetches registrations from the model and passes them to the view.
+     */
     public function index()
     {
         $registrations = $this->model('Registration')->getUserRegistrations($_SESSION['user']['id']);
@@ -29,6 +37,11 @@ class MyEventsController extends Controller
         $this->appView('event/my-events', $data);
     }
 
+    /**
+     * Cancel a user's event registration.
+     * Validates the request method, checks if the registration exists,
+     * and cancels it if valid.
+     */
     public function cancelRegistration($id)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

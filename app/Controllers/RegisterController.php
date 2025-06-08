@@ -7,8 +7,15 @@ use Core\Validator;
 use Core\Flasher;
 use Core\Middleware;
 
+/**
+ * RegisterController handles user registration functionality.
+ */
 class RegisterController extends Controller
 {
+    /**
+     * Validation rules for the registration form.
+     * These rules ensure that the input meets the required criteria.
+     */
     private const VALIDATION_RULES = [
         'username' => [
             'required',
@@ -40,17 +47,27 @@ class RegisterController extends Controller
         ]
     ];
 
-
+    /**
+     * RegisterController constructor.
+     * Ensures that only guests can access the registration page.
+     */
     public function __construct()
     {
        Middleware::isGuest();
     }
 
+    /**
+     * Display the registration page.
+     */
     public function index(): void
     {
         $this->authView('/auth/register');
     }
 
+    /**
+     * Handle the registration form submission.
+     * Validates input, creates a new user, and redirects accordingly.
+     */
     public function store(): void
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -74,10 +91,10 @@ class RegisterController extends Controller
             'email' => $_POST['email'],
             'full_name' => $_POST['full_name'] ?? '',
             'password' => $_POST['password'],
-            'profile_picture' => $_FILES['profile_picture']['name'] ?? ''
+            'profile_picture' => ''
         ];
 
-        $result = $userModel->register($data);
+        $result = $userModel->create($data);
         if ($result > 0) {
             unset($_SESSION['old_input']);
             Flasher::setFlash('Registration successful', 'You can now log in', 'success');

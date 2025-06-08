@@ -5,19 +5,35 @@ namespace App\Controllers;
 use Core\Controller;
 use Core\Flasher;
 use Core\Middleware;
+use Core\Validator;
 
+/**
+ * DashboardController class
+ * Handles all dashboard operations for both admin and regular users
+ */
 class DashboardController extends Controller
 {
+    /**
+     * DashboardController constructor.
+     * Ensures user is authenticated before accessing any dashboard methods
+     */
     public function __construct()
     {
         Middleware::isAuth();
     }
 
+    /**
+     * Show the dashboard based on user role
+     * Automatically redirects to the appropriate dashboard view based on a user role
+     */
     public function index()
     {
-        if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin') {
+        // Load the Event model
+        $eventModel = $this->model('Event');
+
+        // Check if user is an admin
+        if ($_SESSION['user']['role'] === 'admin') {
             // Admin dashboard with dynamic stats
-            $eventModel = $this->model('Event');
             $userModel = $this->model('User');
             $registrationModel = $this->model('Registration');
 
@@ -25,14 +41,11 @@ class DashboardController extends Controller
             $totalEvents = count($eventModel->getAll());
             $totalUsers = $userModel->getTotalUsers();
             $totalRegistrations = $registrationModel->getTotalRegistrations();
-
-            // Get upcoming events (events with start_date >= today)
             $today = date('Y-m-d');
             $upcomingEvents = $eventModel->getUpcomingEventsCount($today);
-
-            // Get recent events (limit to 3)
             $recentEvents = $eventModel->getRecentEvents(3);
 
+            // Data to pass to the view
             $data = [
                 'title' => 'Admin Dashboard',
                 'user' => [
@@ -48,27 +61,26 @@ class DashboardController extends Controller
                 ],
                 'recentEvents' => $recentEvents
             ];
+
+            // Render the admin dashboard view
             $this->dashboardView('dashboard/admin/index', $data);
-        }
-        else {
-            // Regular user dashboard with useful information
-            $eventModel = $this->model('Event');
+        } else {
+            // Regular user dashboard
             $registrationModel = $this->model('Registration');
 
-            // Get user's registrations
+            // Get user registrations
             $userId = $_SESSION['user']['id'];
             $userRegistrations = $registrationModel->getUserRegistrations($userId);
 
-            // Count total registered events (excluding canceled)
+            // Get user stats
             $totalRegistered = 0;
-            // Count attended (completed) events
             $completedEvents = 0;
-            // Get upcoming registered events (events that haven't happened yet)
             $today = date('Y-m-d');
             $upcomingRegistered = 0;
             $nextEvent = null;
             $upcomingEvents = [];
 
+            // Loop through user registrations to calculate stats
             foreach ($userRegistrations as $registration) {
                 // Count only non-canceled registrations
                 if ($registration['status'] != 'canceled') {
@@ -91,17 +103,7 @@ class DashboardController extends Controller
                 }
             }
 
-            $recommendedEvents = $eventModel->getRecommendedEvents($userId, 2);
-
-
-
-            // Check if there are any published upcoming events
-            $publishedUpcoming = $eventModel->getUpcomingEventsCount($today);
-            error_log("Total upcoming published events: " . $publishedUpcoming);
-
-            // Check how many events the user is registered for
-            error_log("User registered for " . $totalRegistered . " events");
-
+            // Data to pass to the view
             $data = [
                 'title' => 'User Dashboard',
                 'user' => [
@@ -115,42 +117,81 @@ class DashboardController extends Controller
                     'completedEvents' => $completedEvents
                 ],
                 'nextEvent' => $nextEvent,
-                'recommendedEvents' => $recommendedEvents
+                'recommendedEvents' =>  $eventModel->getRecommendedEvents($userId, 2)
             ];
+
+            // Render the user dashboard view
             $this->dashboardView('dashboard/user/index', $data);
         }
     }
 
+
+    /**
+     * Show the event management page
+     * Only accessible by admin or user based on their role
+     */
     public function event()
     {
-        if (isset($_SESSION['user']) && $_SESSION['user']['role'] === 'admin') {
-            // Admin dashboard
-            $data = [
-                'title' => 'Event - Dashboard',
-                'user' => [
-                    'username' => $_SESSION['user']['username'],
-                    'email' => $_SESSION['user']['email'],
-                    'full_name' => $_SESSION['user']['full_name']
-                ],
-                'events' => $this->model('Event')->getAll()
-            ];
-            $this->dashboardView('dashboard/admin/event/index', $data);
-        }
-        else {
-            // Regular user dashboard
-            $data = [
-                'title' => 'Event - Dashboard',
-                'user' => [
-                    'username' => $_SESSION['user']['username'],
-                    'email' => $_SESSION['user']['email'],
-                    'full_name' => $_SESSION['user']['full_name']
-                ],
-               'registrations' => $registrations = $this->model('Registration')->getUserRegistrations($_SESSION['user']['id'])
-            ];
-            $this->dashboardView('dashboard/user/event/index', $data);
+        // Check a user role and redirect to the appropriate method
+        if ($_SESSION['user']['role'] === 'admin') {
+            $this->adminEvent();
+        } else {
+            $this->userEvent();
         }
     }
 
+    /**
+     * Show user management page
+     * Only accessible by admin users
+     */
+    public function users(){
+        // Ensure only admin can access this method
+        Middleware::isAdmin();
+
+        // Load the User model and get all users
+        $userModel = $this->model('User');
+        $users = $userModel->getAll();
+
+        $data = [
+            'title' => 'User Management',
+            'users' => $users,
+            'user' => [
+                'username' => $_SESSION['user']['username'],
+                'email' => $_SESSION['user']['email'],
+                'full_name' => $_SESSION['user']['full_name']
+            ],
+        ];
+
+        $this->dashboardView('dashboard/admin/user/index', $data);
+    }
+
+    /**
+     * Show user profile
+     */
+    public function profile()
+    {
+        // Get user profile data from the User model by user ID
+        $userModel = $this->model('User');
+        $user = $userModel->getUserById($_SESSION['user']['id']);
+
+        // Pass data to the view
+        $data = [
+            'title' => 'My Profile',
+            'userProfile' => $user,
+            'user' => [
+                'username' => $_SESSION['user']['username'],
+                'email' => $_SESSION['user']['email'],
+                'full_name' => $_SESSION['user']['full_name']
+            ]
+        ];
+
+        // Render the profile view
+        $this->dashboardView('dashboard/profile/index', $data);
+    }
+
+    /**
+     * Logout the user
+     */
     public function logout()
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -163,5 +204,47 @@ class DashboardController extends Controller
 
         Flasher::setFlash('Logged out successfully', 'See you again!', 'success');
         $this->redirect('/login');
+    }
+
+    /**
+     * Show admin event management page
+     * Only accessible by admin users
+     */
+    public function adminEvent()
+    {
+        // Ensure only admin can access this method
+        Middleware::isAdmin();
+
+        $data = [
+            'title' => 'Event Management - Dashboard',
+            'user' => [
+                'username' => $_SESSION['user']['username'],
+                'email' => $_SESSION['user']['email'],
+                'full_name' => $_SESSION['user']['full_name']
+            ],
+            'events' => $this->model('Event')->getAll()
+        ];
+        $this->dashboardView('dashboard/admin/event/index', $data);
+    }
+
+    /**
+     * Show user's registered events
+     * Only accessible by regular users
+     */
+    public function userEvent()
+    {
+        // Ensure only regular users can access this method
+        Middleware::isUser();
+
+        $data = [
+            'title' => 'My Events - Dashboard',
+            'user' => [
+                'username' => $_SESSION['user']['username'],
+                'email' => $_SESSION['user']['email'],
+                'full_name' => $_SESSION['user']['full_name']
+            ],
+            'registrations' => $this->model('Registration')->getUserRegistrations($_SESSION['user']['id'])
+        ];
+        $this->dashboardView('dashboard/user/event/index', $data);
     }
 }

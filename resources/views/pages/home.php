@@ -14,7 +14,7 @@
             There are various types of seminars you need. <br />
             So register yourself now and find the seminar that interests you!
         </p>
-        <a href="#" class="inline-block rounded-full bg-[#1C2D5A] px-8 py-2 font-semibold text-white shadow hover:bg-[#162447]">Start now</a>
+        <a href="<?=BASE_URL?>/event" class="inline-block rounded-full bg-[#1C2D5A] px-8 py-2 font-semibold text-white shadow hover:bg-[#162447]">Start now</a>
     </div>
 
     <div class="mt-12 flex justify-center lg:mt-0 lg:w-1/2">

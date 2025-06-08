@@ -1,12 +1,21 @@
-<?php
-// This page displays all published events in a card layout
-?>
-
 <section class="bg-white/30 backdrop-blur-sm py-8">
     <div class="container max-w-screen-xl mx-auto px-4">
         <header class="mb-8">
-            <h1 class="text-3xl font-bold text-gray-900 mb-2">Upcoming Events</h1>
-            <p class="text-lg text-gray-600">Browse our upcoming events and register to participate</p>
+            <?php if (isset($data['keyword'])): ?>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Search Results: "<?= htmlspecialchars($data['keyword']) ?>"</h1>
+                <p class="text-lg text-gray-600 mb-4">
+                    Found <?= count($data['events']) ?> results for your search
+                </p>
+                <a href="<?= BASE_URL ?>/event" class="inline-flex items-center text-blue-600 hover:underline">
+                    <svg class="w-3.5 h-3.5 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 10">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 5H1m0 0 4 4M1 5l4-4"/>
+                    </svg>
+                    Back to all events
+                </a>
+            <?php else: ?>
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">Upcoming Events</h1>
+                <p class="text-lg text-gray-600">Browse our upcoming events and register to participate</p>
+            <?php endif; ?>
         </header>
 
         <!-- Flash messages -->
@@ -78,22 +87,14 @@
 
                             <!-- Date badge on top right with remaining days -->
                             <div class="absolute top-3 right-3 bg-white/90 backdrop-blur-sm text-gray-800 text-xs font-medium px-3 py-1 rounded-full shadow-sm">
-                                <?php
-                                // Calculate remaining days
-                                $today = new DateTime();
-                                $eventDate = new DateTime($event['start_date'] . ' ' . $event['start_time']);
-                                $daysRemaining = $today->diff($eventDate)->days;
-                                $isPast = $today > $eventDate;
-                                ?>
-
-                                <?php if ($isPast): ?>
+                                <?php if ($event['is_past']): ?>
                                     <span class="text-red-600">Passed</span>
-                                <?php elseif ($daysRemaining == 0): ?>
+                                <?php elseif ($event['days_remaining'] == 0): ?>
                                     <span class="text-orange-600">Today!</span>
-                                <?php elseif ($daysRemaining == 1): ?>
+                                <?php elseif ($event['days_remaining'] == 1): ?>
                                     <span class="text-orange-600">Tomorrow!</span>
                                 <?php else: ?>
-                                    <span class="text-gray-900"><?= $daysRemaining ?> days</span>
+                                    <span class="text-gray-900"><?= $event['days_remaining'] ?> days</span>
                                 <?php endif; ?>
                             </div>
                         </a>
@@ -123,47 +124,34 @@
                             <p class="text-gray-600 text-sm mb-4 line-clamp-3">
                                 <?= htmlspecialchars($event['short_description']) ?>
                             </p>
-
-                            <!-- Check available seats -->
-                            <?php
-                            $eventModel = new \App\Models\Event();
-                            $quotaInfo = $eventModel->checkQuota($event['id']);
-                            $registrationClosed = strtotime($event['registration_deadline']) < time();
-                            $eventEnded = strtotime($event['end_date'] . ' ' . $event['end_time']) < time();
-                            $isRegistered = false;
-
-                            if (isset($_SESSION['user'])) {
-                                $isRegistered = $eventModel->isUserRegistered($event['id'], $_SESSION['user']['id']);
-                            }
-                            ?>
                         </div>
 
                         <!-- Bottom Section with Status and Available Seats -->
                         <div class="px-4 py-3 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
                             <!-- Registration Status -->
                             <div>
-                                <?php if ($eventEnded): ?>
+                                <?php if ($event['event_ended']): ?>
                                     <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-gray-100 text-gray-800">
                                         <svg class="w-3 h-3 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6v4l3.276 3.276M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                         </svg>
                                         Event Ended
                                     </span>
-                                <?php elseif ($registrationClosed): ?>
+                                <?php elseif ($event['registration_closed']): ?>
                                     <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-yellow-100 text-yellow-800">
                                         <svg class="w-3 h-3 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6v4l3.276 3.276M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                         </svg>
                                         Registration Closed
                                     </span>
-                                <?php elseif ($isRegistered): ?>
+                                <?php elseif ($event['is_registered']): ?>
                                     <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-green-100 text-green-800">
                                         <svg class="w-3 h-3 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m7 10 2 2 4-4m6 2a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                                         </svg>
                                         Registered
                                     </span>
-                                <?php elseif ($quotaInfo && $quotaInfo['available'] <= 0): ?>
+                                <?php elseif ($event['quota_info'] && $event['quota_info']['available'] <= 0): ?>
                                     <span class="inline-flex items-center px-2 py-1 rounded-md text-xs font-medium bg-red-100 text-red-800">
                                         <svg class="w-3 h-3 mr-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6v4l3.276 3.276M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
@@ -181,9 +169,9 @@
                             </div>
 
                             <!-- Available Seats -->
-                            <?php if ($quotaInfo): ?>
-                                <div class="text-xs font-medium <?= ($quotaInfo['available'] > 0) ? 'text-green-600' : 'text-red-600' ?>">
-                                    <?= $quotaInfo['available'] ?>/<?= $quotaInfo['quota'] ?> seats
+                            <?php if ($event['quota_info']): ?>
+                                <div class="text-xs font-medium <?= ($event['quota_info']['available'] > 0) ? 'text-green-600' : 'text-red-600' ?>">
+                                    <?= $event['quota_info']['available'] ?>/<?= $event['quota_info']['quota'] ?> seats
                                 </div>
                             <?php endif; ?>
                         </div>

@@ -5,13 +5,24 @@ namespace App\Controllers;
 use Core\Controller;
 use Core\Middleware;
 
+/**
+ * TicketController handles ticket-related operations such as downloading tickets.
+ */
 class TicketController extends Controller
 {
+    /**
+     * TicketController constructor.
+     */
     public function __construct()
     {
-        Middleware::isAuth(); // Ensure user is logged in
+        Middleware::isAuth();
     }
 
+    /**
+     * Download a ticket by its ID.
+     * Validates the ID, checks if the registration exists and belongs to the current user,
+     * then generates a PDF ticket for download.
+     */
     public function download($id)
     {
         // Validate ID
@@ -24,8 +35,8 @@ class TicketController extends Controller
         $registrationModel = $this->model('Registration');
         $registration = $registrationModel->getById($id);
 
-        // Check if registration exists and belongs to current user
-        if (!$registration || $registration['id_user'] != $_SESSION['user']['id']) {
+        // Check if registration exists and belongs to the current user or if the user is an admin
+        if (!$registration || ($registration['id_user'] != $_SESSION['user']['id'] && $_SESSION['user']['role'] !== 'admin')) {
             $this->redirect('/dashboard/event');
             return;
         }
@@ -34,6 +45,10 @@ class TicketController extends Controller
         $this->generateTicketPDF($registration);
     }
 
+    /**
+     * Generates a PDF ticket for the given registration.
+     * Sets headers for PDF download and uses FPDF library to create the ticket layout.
+     */
     private function generateTicketPDF($registration)
     {
         // Set headers for PDF download
@@ -45,6 +60,10 @@ class TicketController extends Controller
         if (!empty($registration['qr_code'])) {
             $qrCodePath = $_SERVER['DOCUMENT_ROOT'] . '/images/qrcodes/' . $registration['qr_code'];
         }
+
+        // Get user information for the ticket
+        $userModel = $this->model('User');
+        $user = $userModel->getUserById($registration['id_user']);
 
         // Use FPDF library
         require_once __DIR__ . '/../../app/Config/fpdf/fpdf.php';
@@ -161,7 +180,7 @@ class TicketController extends Controller
         $pdf->SetFont('Arial', 'B', 11);
         $pdf->SetTextColor(17, 24, 39);
         $pdf->SetXY(90, $newBottomY + 16);
-        $pdf->Cell(100, 6, utf8_decode($_SESSION['user']['full_name']), 0, 1);
+        $pdf->Cell(100, 6, utf8_decode($user['full_name']), 0, 1);
 
         // ORDER NUMBER and REGISTERED in two columns - like modal
         $pdf->SetFont('Arial', '', 9);

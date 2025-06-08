@@ -6,9 +6,9 @@ class Middleware
     {
         if (isset($_SESSION['user'])) {
             if ($_SESSION['user']['role'] === 'admin') {
-                header('Location: ' . BASE_URL . '/dashboard/admin');
+                header('Location: ' . BASE_URL . '/dashboard');
             } else {
-                header('Location: ' . BASE_URL . '/dashboard/user');
+                header('Location: ' . BASE_URL . '/dashboard');
             }
             exit;
         }
@@ -17,6 +17,7 @@ class Middleware
     public static function isAuth()
     {
         if (!isset($_SESSION['user'])) {
+            Flasher::setFlash('Login required', 'You need to login first to access this page', 'warning');
             header('Location: ' . BASE_URL . '/login');
             exit;
         }
@@ -26,7 +27,8 @@ class Middleware
     {
         self::isAuth();
         if ($_SESSION['user']['role'] !== 'admin') {
-            header('Location: ' . BASE_URL . '/dashboard/user');
+            Flasher::setFlash('Access Denied', 'You do not have permission to access this page', 'error');
+            header('Location: ' . BASE_URL . '/dashboard');
             exit;
         }
     }
@@ -35,7 +37,8 @@ class Middleware
     {
         self::isAuth();
         if ($_SESSION['user']['role'] !== 'user') {
-            header('Location: ' . BASE_URL . '/dashboard/admin');
+            Flasher::setFlash('Access Denied', 'You do not have permission to access this page', 'error');
+            header('Location: ' . BASE_URL . '/dashboard');
             exit;
         }
     }

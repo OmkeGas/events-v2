@@ -4,79 +4,65 @@ namespace App\Controllers;
 
 use Core\Controller;
 use Core\Flasher;
+use Core\Middleware;
 
+/**
+ * RegistrationController class
+ * Handles all registration-related operations like registering for events and cancelling registrations
+ */
 class RegistrationController extends Controller
 {
+
+    /**
+     * RegistrationController constructor.
+     * Ensures that only user can access the registration page.
+     */
     public function __construct()
     {
-        // Check if user is logged in
-        if (!isset($_SESSION['user'])) {
-            Flasher::setFlash('Login required', 'You need to login first to access this page', 'warning');
-            $this->redirect('/login');
-            exit;
-        }
+        Middleware::isAuth();
     }
 
+    /**
+     * Process event registration
+     */
     public function store($eventId)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            $this->redirect('/event/show' . $eventId);
+            $this->redirect('/event/show/' . $eventId);
             return;
         }
 
         $eventModel = $this->model('Event');
         $registrationModel = $this->model('Registration');
 
-        $event = $eventModel->getById($eventId);
-        if (!$event) {
-            Flasher::setFlash('Event not found', 'The event you are trying to register for does not exist', 'error');
-            $this->redirect('/event');
-            return;
-        }
+        $eventController = new EventController();
+        $eligibility = $eventController->validateEventRegistrationEligibility($eventModel, $eventId);
 
-
-        // Check if registration deadline has passed
-        if (strtotime($event['registration_deadline']) < time()) {
-            Flasher::setFlash('Registration closed', 'The registration deadline for this event has passed', 'error');
+        if ($eligibility !== true) {
+            Flasher::setFlash($eligibility['title'], $eligibility['message'], $eligibility['type']);
             $this->redirect('/event/show/' . $eventId);
             return;
         }
 
-        // Check if event has already ended
-        if (strtotime($event['end_date'] . ' ' . $event['end_time']) < time()) {
-            Flasher::setFlash('Event ended', 'This event has already ended', 'error');
-            $this->redirect('/event/show/' . $eventId);
-            return;
-        }
-
-        // Check if user is already registered
-        if ($eventModel->isUserRegistered($eventId, $_SESSION['user']['id'])) {
-            Flasher::setFlash('Already registered', 'You are already registered for this event', 'warning');
-            $this->redirect('/event/show/' . $eventId);
-            return;
-        }
-
-        // Check quota availability
-        $quotaInfo = $eventModel->checkQuota($eventId);
-        if (!$quotaInfo || $quotaInfo['available'] <= 0) {
-            Flasher::setFlash('Registration failed', 'This event has reached its maximum capacity', 'error');
-            $this->redirect('/event/show/' . $eventId);
-            return;
-        }
-
-        // Register user for the event
         $result = $registrationModel->register($eventId, $_SESSION['user']['id']);
 
         if ($result['status']) {
             Flasher::setFlash('Registration successful', 'You have successfully registered for this event', 'success');
-            $this->redirect('/event/show/' . $eventId);
         } else {
-            Flasher::setFlash('Registration failed', 'An error occurred during registration. Please try again.', 'error');
-            $this->redirect('/event/show/' . $eventId);
+            // Use more specific error message if available
+            $errorMessage = isset($result['message']) ? 'Error: ' . $result['message'] : 'An error occurred during registration. Please try again.';
+            Flasher::setFlash('Registration failed', $errorMessage, 'error');
+            // Log the error for admin review
+            error_log("User registration failed for event {$eventId} by user {$_SESSION['user']['id']}: " . json_encode($result));
         }
+
+        $this->redirect('/event/show/' . $eventId);
     }
 
-    public function destroy($id)
+    /**
+     * Cancel a registration
+     */
+    public function cancel($id)
     {
         if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             $this->redirect('/dashboard/event');
