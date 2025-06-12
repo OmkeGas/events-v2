@@ -28,8 +28,7 @@ This project is an Event Management System designed for both users and administr
    - Registration status
 
 #### Priority 3 (Additional Features - Nice to Have):
-1. Data export (Excel/PDF)
-2. Detailed reports and analytics
+1. Detailed reports and analytics
 
 ### Admin Features
 #### Priority 1 (Core Features - Must Have):
