@@ -15,7 +15,6 @@ This project is an Event Management System designed for both users and administr
    - Logout
    - Edit basic profile (photo, name, email, password)
 2. **Event Management**
-   - View event list (with basic filters & search)
    - View event details
    - Register for events
    - View registered event tickets
