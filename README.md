@@ -13,7 +13,7 @@ This project is an Event Management System designed for both users and administr
    - Register
    - Login
    - Logout
-   - Edit basic profile (photo, name, email, password)
+   - Edit basic profile (name, email, password)
 2. **Event Management**
    - View event details
    - Register for events
