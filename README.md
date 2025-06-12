@@ -28,7 +28,7 @@ This project is an Event Management System designed for both users and administr
    - Registration status
 
 #### Priority 3 (Additional Features - Nice to Have):
-1. Bookmark/favorite events
+
 2. Event ratings and reviews
 3. Reminder notifications
 4. Social features (share, invite friends, forum)
