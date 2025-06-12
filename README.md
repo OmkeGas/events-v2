@@ -19,7 +19,7 @@ This project is an Event Management System designed for both users and administr
    - Register for events
    - View registered event tickets
    - Print tickets (with QR Code)
-   - Print certificates (for attended events)
+   
 
 #### Priority 2 (Important Features - If Time Permits):
 1. **User Dashboard**
