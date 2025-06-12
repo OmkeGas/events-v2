@@ -28,10 +28,9 @@ This project is an Event Management System designed for both users and administr
    - Registration status
 
 #### Priority 3 (Additional Features - Nice to Have):
-1. Reminder notifications
-2. Social features (share, invite friends, forum)
-3. Data export (Excel/PDF)
-4. Detailed reports and analytics
+1. Social features (share, invite friends, forum)
+2. Data export (Excel/PDF)
+3. Detailed reports and analytics
 
 ### Admin Features
 #### Priority 1 (Core Features - Must Have):
